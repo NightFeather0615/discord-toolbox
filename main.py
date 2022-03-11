@@ -13,6 +13,9 @@ def fetch_user(user_token: str):
   url = "https://discord.com/api/users/@me"
   user_data = requests.get(url, headers = {"Authorization": user_token})
   user_data = user_data.json()
+  if user_data.get('code') == 0:
+    print("[Error]\n - Invalid token.")
+    sys.exit()
   print(f"[Logged in as user]\n - ID: {user_data['id']}\n - Username: {user_data['username']}\n - Discriminator: {user_data['discriminator']}")
   check_is_continue()
 
