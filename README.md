@@ -1,5 +1,5 @@
 # discord-toolbox
-🧰 a simple Discord self-bot tools combination package
+a simple Discord self-bot tools combination package
 
 # Available tools
 * fetch-images
