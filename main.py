@@ -21,7 +21,6 @@ class Core(object):
     fetch_images_parser.add_argument('--channel-id', "-c", required=True, nargs=1, type=str, help='discord channel ID')
     fetch_images_parser.add_argument('--output-dir', "-o", required=False, nargs=1, type=str, help='output directory')
     fetch_images_parser.add_argument('--quiet', "-q", required=False, action='store_true', help='quiet mode')
-    fetch_images_parser.add_argument('--version', "-v", action='version', version='%(prog)s 0.1')
 
     return parser.parse_args()
 
