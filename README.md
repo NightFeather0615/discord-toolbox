@@ -1,4 +1,4 @@
-# discord-toolbox
+# discord-toolbox 🧰
 a simple Discord self-bot tools combination package
 
 # Available tools
