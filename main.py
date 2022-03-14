@@ -17,19 +17,24 @@ class Core(object):
       image = requests.get(url).content
       f.write(image)
       if quiet == False:
-        print(f"Downloaded {file_name}.{file_type}, ~{round(len(image) * 0.001, 1)} KB")
+        print(f"Downloaded {file_name}.{file_type}, ~ {round(len(image) * 0.001, 1)} KB")
 
   def build_parser():
     parser = argparse.ArgumentParser(description = 'Discord self-bot tools.', epilog = 'Made by NightFeather')
 
-    tool_parsers = parser.add_subparsers(help='Tools', dest="tool")
-    tool_parsers.required = True
-
-    fetch_images_parser = tool_parsers.add_parser('fetch-images', help='fetch images from channel (only available if you are able to access the channel)')
+    tool_parsers = parser.add_subparsers(dest="tool", title = 'Tools', required = True)
+    
+    fetch_images_parser = tool_parsers.add_parser('backup-images', help='backup images from channel (only available if you are able to access the channel)')
     fetch_images_parser.add_argument('--token', "-t", required=True, nargs=1, type=str, help='user token (not bearer token)')
     fetch_images_parser.add_argument('--channel-id', "-c", required=True, nargs=1, type=str, help='discord channel ID')
     fetch_images_parser.add_argument('--output-dir', "-o", required=False, nargs=1, type=str, help='output directory')
     fetch_images_parser.add_argument('--quiet', "-q", required=False, action='store_true', help='quiet mode')
+
+    fetch_emojis_parser = tool_parsers.add_parser('fetch-emojis', help='fetch emojis from guild (only available if you are able to access the guild)')
+    fetch_emojis_parser.add_argument('--token', "-t", required=True, nargs=1, type=str, help='user token (not bearer token)')
+    fetch_emojis_parser.add_argument('--guild-id', "-g", required=True, nargs=1, type=str, help='discord guild ID')
+    fetch_emojis_parser.add_argument('--output-dir', "-o", required=False, nargs=1, type=str, help='output directory')
+    fetch_emojis_parser.add_argument('--quiet', "-q", required=False, action='store_true', help='quiet mode')
 
     fetch_stickers_parser = tool_parsers.add_parser('fetch-stickers', help='fetch stickers from guild (only available if you are able to access the guild)')
     fetch_stickers_parser.add_argument('--token', "-t", required=True, nargs=1, type=str, help='user token (not bearer token)')
@@ -58,21 +63,45 @@ class ImageFetcher(object):
 
   def fetch_images(channel_id: str, token: str, output_dir: str, quiet: bool, before: str = None):
     if output_dir == None:
-      Core.make_folder(f"./{channel_id}")
-      output_dir = f"./{channel_id}"
+      output_dir = f"./backups/{channel_id}/images"
+      Core.make_folder("./backups")
+      Core.make_folder(f"./backups/{channel_id}")
+      Core.make_folder(f"./backups/{channel_id}/images")
+
     url = f"https://discord.com/api/channels/{channel_id}/messages" + ("" if before is None else f"?before={before}")
     messages = requests.get(url, headers = {"Authorization": token}).json()
     for message in messages:
       if message["attachments"] != []:
+        index = 1
         for attachment in message["attachments"]:
           if attachment["content_type"].startswith("image/"):
-            file_name = str(hash(message["id"] + message["timestamp"] + attachment["url"])).replace("-", "")
+            file_name = f"{message['id']} - {index}"
+            index += 1
             Core.download_image(attachment["url"], file_name, "png", output_dir, quiet)
+
     if len(messages) == 50:
       ImageFetcher.fetch_images(channel_id, token, output_dir, quiet, messages[-1]["id"])
     else:
-      print("Fetching complete.")
+      print("\nFetching complete.")
 
+class EmojisFetcher(object):
+  def __init__(self):
+    pass
+
+  def fetch_emojis(guild_id: str, token: str, output_dir: str, quiet: bool):
+    if output_dir == None:
+      output_dir = f"./emojis/{guild_id}"
+      Core.make_folder("./emojis")
+      Core.make_folder(f"./emojis/{guild_id}")
+
+    url = f"https://discord.com/api/guilds/{guild_id}/emojis"
+    emojis = requests.get(url, headers = {"Authorization": token}).json()
+
+    for emoji in emojis:
+      file_type = "png" if emoji['animated'] == False else "gif"
+      emoji_url = f"https://cdn.discordapp.com/emojis/{emoji['id']}.{file_type}"
+      Core.download_image(emoji_url, emoji['id'], file_type, output_dir, quiet)
+    print("\nFetching complete.")
 
 class StickersFetcher(object):
   def __init__(self):
@@ -80,8 +109,9 @@ class StickersFetcher(object):
 
   def fetch_stickers(guild_id: str, token: str, output_dir: str, quiet: bool):
     if output_dir == None:
-      Core.make_folder(f"./{guild_id}")
-      output_dir = f"./{guild_id}"
+      output_dir = f"./stickers/{guild_id}"
+      Core.make_folder("./stickers")
+      Core.make_folder(f"./stickers/{guild_id}")
     url = f"https://discord.com/api/guilds/{guild_id}/stickers"
     stickers = requests.get(url, headers = {"Authorization": token}).json()
     for sticker in stickers:
@@ -90,17 +120,21 @@ class StickersFetcher(object):
       if sticker['format_type'] == 2:
         apnggif.apnggif(png = f"./{output_dir}/{sticker['id']}.png", gif = f"./{output_dir}/{sticker['id']}.gif")
         os.remove(f"./{output_dir}/{sticker['id']}.png")
-        print(f"Converted {sticker['id']}.png to {sticker['id']}.gif")
+        print(f"Converted {sticker['id']}.png to gif")
+      elif stickers['format_type'] == 3:
+        print("Convert failed, unsupported format: Lottie")
     print("\nFetching complete.")
 
 def main():
   args = Core.build_parser()
   if Discord.fetch_user(args.token[0]) != None:
     print("Starting...\n")
-    if args.tool == "fetch-images":
+    if args.tool == "backup-images":
       ImageFetcher.fetch_images(args.channel_id[0], args.token[0], args.output_dir, args.quiet)
-    if args.tool == "fetch-stickers":
+    elif args.tool == "fetch-stickers":
       StickersFetcher.fetch_stickers(args.guild_id[0], args.token[0], args.output_dir, args.quiet)
+    elif args.tool == "fetch-emojis":
+      EmojisFetcher.fetch_emojis(args.guild_id[0], args.token[0], args.output_dir, args.quiet)
 
 if "__main__" == __name__:
   main()
