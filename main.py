@@ -23,7 +23,7 @@ class Core(object):
     parser = argparse.ArgumentParser(description = 'Discord self-bot tools.', epilog = 'Made by NightFeather')
 
     tool_parsers = parser.add_subparsers(dest="tool", title = 'Tools', required = True)
-    
+
     fetch_images_parser = tool_parsers.add_parser('backup-images', help='backup images from channel (only available if you are able to access the channel)')
     fetch_images_parser.add_argument('--token', "-t", required=True, nargs=1, type=str, help='user token (not bearer token)')
     fetch_images_parser.add_argument('--channel-id', "-c", required=True, nargs=1, type=str, help='discord channel ID')
@@ -100,7 +100,8 @@ class EmojisFetcher(object):
     for emoji in emojis:
       file_type = "png" if emoji['animated'] == False else "gif"
       emoji_url = f"https://cdn.discordapp.com/emojis/{emoji['id']}.{file_type}"
-      Core.download_image(emoji_url, emoji['id'], file_type, output_dir, quiet)
+      file_name = f"{emoji['id']} - {emoji['name']}"
+      Core.download_image(emoji_url, file_name, file_type, output_dir, quiet)
     print("\nFetching complete.")
 
 class StickersFetcher(object):
