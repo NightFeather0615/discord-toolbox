@@ -4,11 +4,11 @@ a simple Discord self-bot tools combination package
 # Available tools
 * Check Token
 * Change HypeSquad House
-* Backup Images
-* Fetch Emojis
-* Fetch Stickers
+* Backup Media
+* Fetch Emoji
+* Fetch Sticker
 
-## Basic Command format
+## Basic Command Format
 `python3 main.py --token TOKEN [TOOL] [Args]`
 
 E.g.   
@@ -29,7 +29,7 @@ Quick example:
 |Argument|Alias|Required|Description|
 |-|-|-|-|
 |--token|-t|True|Discord user token (not bearer token)|
-|--house-id|-c|True|HypeSquad house ID|
+|--house-id|-i|True|HypeSquad house ID|
 
 |ID|House|
 |-|-|
@@ -37,9 +37,9 @@ Quick example:
 |2|Brilliance|
 |3|Balance|
 
-## Backup Images
+## Backup Media
 Quick example:  
-`python3 main.py --token OTIASDEQDA5Mjky.YEWQEQmw.PlM2JJQWEQWEDJ7HDyhrw backup-images --channel-id 456574854780912354`
+`python3 main.py --token OTIASDEQDA5Mjky.YEWQEQmw.PlM2JJQWEQWEDJ7HDyhrw backup-media --channel-id 456574854780912354`
 
 |Argument|Alias|Required|Description|
 |-|-|-|-|
@@ -48,9 +48,9 @@ Quick example:
 |--output-dir|-o|False|Output directory|
 |--quiet|-q|False|Quiet output|
 
-## Fetch Emojis
+## Fetch Emoji
 Quick example:  
-`python3 main.py --token OTIASDEQDA5Mjky.YEWQEQmw.PlM2JJQWEQWEDJ7HDyhrw fetch-emojis --guild-id 456574854780912354`
+`python3 main.py --token OTIASDEQDA5Mjky.YEWQEQmw.PlM2JJQWEQWEDJ7HDyhrw fetch-emoji --guild-id 456574854780912354`
 
 |Argument|Alias|Required|Description|
 |-|-|-|-|
@@ -59,9 +59,9 @@ Quick example:
 |--output-dir|-o|False|Output directory|
 |--quiet|-q|False|Quiet output|
 
-## Fetch Stickers
+## Fetch Sticker
 Quick example:  
-`python3 main.py --token OTIASDEQDA5Mjky.YEWQEQmw.PlM2JJQWEQWEDJ7HDyhrw fetch-stickers --guild-id 456574854780912354`
+`python3 main.py --token OTIASDEQDA5Mjky.YEWQEQmw.PlM2JJQWEQWEDJ7HDyhrw fetch-sticker --guild-id 456574854780912354`
 
 |Argument|Alias|Required|Description|
 |-|-|-|-|
