@@ -21,7 +21,9 @@ warning = "\n[WARNING]\nThis tool using self-bot, which is against Discord ToS, 
 def main() -> None:
   print(ascii_title)
   print(warning)
+  
   args = Core.build_parser()
+
   if Discord.fetch_user(args.token[0]) != None:
     if args.tool != None:
       print(f"[Info]\nStarting {args.tool}...\n")
