@@ -25,6 +25,7 @@ class MediaFetcher(object):
         for attachment in message["attachments"]:
           if attachment["content_type"].startswith(("image/", "video/", "audio/")):
             file_type = attachment["content_type"].split("/")[1]
+            if file_type == "quicktime": file_type = "mov"
             file_name = f"{message['id']} - {media_index}"
             Core.download_file(attachment["url"], file_name, file_type, output_dir, quiet)
             MediaFetcher.media_count += 1

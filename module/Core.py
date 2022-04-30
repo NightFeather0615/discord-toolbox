@@ -15,7 +15,7 @@ class Core(object):
       file = requests.get(url).content
       f.write(file)
       if quiet == False:
-        print(f"Downloaded {file_name}.{file_type}, ≈ {round(len(file) * 0.001, 1)} KB")
+        print(f"Downloaded {file_name}.{file_type}, ≈{round(len(file) * 0.001, 1)} KB")
 
   def build_parser() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description = 'Discord self-bot tools.', epilog = 'Made by NightFeather')
